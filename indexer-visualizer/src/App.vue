@@ -1,5 +1,11 @@
-<script setup></script>
+<script setup>
+import Header from './components/Header.vue';
+import EmailTable from './components/EmailTable.vue';
+</script>
 
 <template>
-  <h1 class="text-3xl font-bold text-red-600">Hello world!</h1>
+  <div class="flex flex-col w-screen">
+    <Header />
+    <EmailTable />
+  </div>
 </template>
