@@ -1,5 +1,6 @@
 <script setup>
 import SearchBar from './SearchBar.vue';
+import Pagination from './Pagination.vue';
 import { useMails } from '../composables/useMails';
 import { onMounted } from 'vue';
 
@@ -8,7 +9,8 @@ onMounted(getMails);
 </script>
 
 <template>
-  <div class="h-100 bg-gray-200 w-[600px] p-5 overflow-y-auto pb-40 font-light overflow-x-hidden">
+  <div
+    class="h-100 bg-gray-200 w-[600px] p-5 overflow-y-auto pb-[75px] font-light overflow-x-hidden relative">
     <SearchBar />
     <div
       class="w-full bg-white mb-5 cursor-pointer rounded-md h-auto p-3 flex gap-3"
@@ -31,5 +33,6 @@ onMounted(getMails);
         </p>
       </div>
     </div>
+    <Pagination />
   </div>
 </template>
