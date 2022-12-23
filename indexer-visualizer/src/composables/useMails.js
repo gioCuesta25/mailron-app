@@ -21,5 +21,23 @@ export const useMails = () => {
     mailsStore.setSearchTerm(text);
   };
 
-  return { mails, selectedMail, searchTerm, from, getMails, showMailDetail, setSearchTerm };
+  const nextPage = () => {
+    mailsStore.setFrom(from.value + 20);
+  };
+
+  const previousPage = () => {
+    mailsStore.setFrom(from.value - 20);
+  };
+
+  return {
+    mails,
+    selectedMail,
+    searchTerm,
+    from,
+    getMails,
+    showMailDetail,
+    setSearchTerm,
+    nextPage,
+    previousPage,
+  };
 };

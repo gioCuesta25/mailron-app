@@ -17,5 +17,8 @@ export const useMailsStore = defineStore('mails', {
     setSearchTerm(text) {
       this.searchTerm = text;
     },
+    setFrom(value) {
+      this.from = value;
+    },
   },
 });
