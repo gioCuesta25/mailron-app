@@ -2,7 +2,6 @@
 import Header from './components/Header.vue';
 import EmailTable from './components/EmailTable.vue';
 import EmailDetail from './components/EmailDetail.vue';
-import SearchBar from './components/SearchBar.vue';
 
 import { ref, onMounted, watch } from 'vue';
 
@@ -38,7 +37,8 @@ watch(searchTerm, async (newValue, oldValue) => {
 
 <template>
   <div class="flex flex-col w-screen h-screen overflow-hidden">
-    <div class="flex gap-1 h-full">
+    <Header />
+    <div class="flex gap-3 h-full">
       <EmailTable :mails="mails" @select-mail="selectMail" />
       <EmailDetail :mail="selectedMail" />
     </div>
