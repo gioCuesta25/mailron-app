@@ -6,6 +6,7 @@ export const useMailsStore = defineStore('mails', {
     selectedMail: undefined,
     searchTerm: '',
     from: 0,
+    totalMails: 0,
   }),
   actions: {
     selectMail(mail) {
@@ -19,6 +20,9 @@ export const useMailsStore = defineStore('mails', {
     },
     setFrom(value) {
       this.from = value;
+    },
+    setTotalMails(value) {
+      this.totalMails = value;
     },
   },
 });

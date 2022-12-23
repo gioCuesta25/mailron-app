@@ -3,7 +3,7 @@ import { useMailsStore } from '../store/mailsStore';
 
 export const useMails = () => {
   const mailsStore = useMailsStore();
-  const { mails, selectedMail, searchTerm, from } = storeToRefs(mailsStore);
+  const { mails, selectedMail, searchTerm, from, totalMails} = storeToRefs(mailsStore);
 
   const getMails = async () => {
     const res = await fetch(
@@ -11,6 +11,7 @@ export const useMails = () => {
     );
     const data = await res.json();
     mailsStore.loadMails(data['hits']['hits']);
+    mailsStore.setTotalMails(data['hits']['total']['value'])
   };
 
   const showMailDetail = (mail) => {
@@ -34,6 +35,7 @@ export const useMails = () => {
     selectedMail,
     searchTerm,
     from,
+    totalMails,
     getMails,
     showMailDetail,
     setSearchTerm,
