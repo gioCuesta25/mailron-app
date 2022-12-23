@@ -6,7 +6,7 @@ import EmailDetail from './components/EmailDetail.vue';
 import { ref, onMounted, watch } from 'vue';
 
 const mails = ref({});
-const selectedMail = ref({});
+const selectedMail = ref(undefined);
 const searchTerm = ref('');
 
 onMounted(async () => {
