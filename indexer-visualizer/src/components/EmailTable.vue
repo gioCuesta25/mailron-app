@@ -1,7 +1,10 @@
 <script setup>
 import SearchBar from './SearchBar.vue';
-defineProps(['mails']);
-defineEmits(['select-mail']);
+import { useMails } from '../composables/useMails';
+import { onMounted } from 'vue';
+
+const { mails, getMails, showMailDetail } = useMails();
+onMounted(getMails);
 </script>
 
 <template>
@@ -10,7 +13,7 @@ defineEmits(['select-mail']);
     <div
       class="w-full bg-white mb-5 cursor-pointer rounded-md h-auto p-3 flex gap-3"
       v-for="mail in mails"
-      @click="() => $emit('select-mail', mail['_source'])"
+      @click="() => showMailDetail(mail['_source'])"
       :key="mail['_id']">
       <div
         class="h-9 w-9 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">
