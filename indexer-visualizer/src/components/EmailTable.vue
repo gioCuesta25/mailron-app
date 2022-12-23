@@ -10,7 +10,7 @@ onMounted(getMails);
 
 <template>
   <div
-    class="h-100 bg-gray-200 w-[600px] p-5 overflow-y-auto pb-[75px] font-light overflow-x-hidden relative">
+    class="h-100 bg-gray-200 w-[600px] p-5 overflow-y-auto pb-40 font-light overflow-x-hidden relative">
     <SearchBar />
     <div
       class="w-full bg-white mb-5 cursor-pointer rounded-md h-auto p-3 flex gap-3"
