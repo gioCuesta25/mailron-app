@@ -5,7 +5,7 @@ export const useMails = () => {
   const mailsStore = useMailsStore();
   const { mails, selectedMail, searchTerm, from } = storeToRefs(mailsStore);
 
-  const getMails = async (params) => {
+  const getMails = async () => {
     const res = await fetch(
       `http://localhost:4000/documents/match?term=${searchTerm.value}&from=${from.value}`
     );
@@ -17,5 +17,9 @@ export const useMails = () => {
     mailsStore.selectMail(mail);
   };
 
-  return { mails, selectedMail, searchTerm, from, getMails, showMailDetail };
+  const setSearchTerm = (text) => {
+    mailsStore.setSearchTerm(text);
+  };
+
+  return { mails, selectedMail, searchTerm, from, getMails, showMailDetail, setSearchTerm };
 };
