@@ -63,6 +63,26 @@ func main() {
 
 func MatchPhrase(w http.ResponseWriter, r *http.Request) {
 
+	term := r.URL.Query().Get("term")
+	from := r.URL.Query().Get("from")
+
+	resp := makeSearchRequest(term, from)
+
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	data := parseResponse(body)
+
+	w.Write(data)
+
+}
+
+func makeSearchRequest(term string, from string) *http.Response {
 	query := `{
 		"search_type": "%s",
 		"query":
@@ -75,8 +95,6 @@ func MatchPhrase(w http.ResponseWriter, r *http.Request) {
 	}`
 
 	searchType := "alldocuments"
-	term := r.URL.Query().Get("term")
-	from := r.URL.Query().Get("from")
 
 	if term != "" {
 		searchType = "matchphrase"
@@ -100,17 +118,13 @@ func MatchPhrase(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	defer resp.Body.Close()
+	return resp
+}
 
-	body, err := io.ReadAll(resp.Body)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
+func parseResponse(body []byte) []byte {
 	var result ZincSearchResponse
 
-	err = json.Unmarshal(body, &result)
+	err := json.Unmarshal(body, &result)
 
 	if err != nil {
 		log.Fatal(err)
@@ -137,6 +151,5 @@ func MatchPhrase(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	w.Write(data)
-
+	return data
 }
