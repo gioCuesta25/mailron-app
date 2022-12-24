@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"strings"
-	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -15,26 +14,13 @@ import (
 )
 
 type ZincSearchResponse struct {
-	Took     int  `json:"took"`
-	TimedOut bool `json:"timed_out"`
-	Shards   struct {
-		Total      int `json:"total"`
-		Successful int `json:"successful"`
-		Skipped    int `json:"skipped"`
-		Failed     int `json:"failed"`
-	} `json:"_shards"`
 	Hits struct {
 		Total struct {
 			Value int `json:"value"`
 		} `json:"total"`
-		MaxScore float64 `json:"max_score"`
-		Hits     []struct {
-			Index     string    `json:"_index"`
-			Type      string    `json:"_type"`
-			ID        string    `json:"_id"`
-			Score     float64   `json:"_score"`
-			Timestamp time.Time `json:"@timestamp"`
-			Source    struct {
+		Hits []struct {
+			ID     string `json:"_id"`
+			Source struct {
 				Content string `json:"content"`
 				From    string `json:"from"`
 				Subject string `json:"subject"`
