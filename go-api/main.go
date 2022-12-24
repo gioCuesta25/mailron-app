@@ -1,47 +1,16 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
-	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
+
+	"github.com/Giovanni-Romana-Cuesta/go-api/utils"
 )
-
-type ZincSearchResponse struct {
-	Hits struct {
-		Total struct {
-			Value int `json:"value"`
-		} `json:"total"`
-		Hits []struct {
-			ID     string `json:"_id"`
-			Source struct {
-				Content string `json:"content"`
-				From    string `json:"from"`
-				Subject string `json:"subject"`
-				To      string `json:"to"`
-			} `json:"_source"`
-		} `json:"hits"`
-	} `json:"hits"`
-}
-
-type Response struct {
-	Total int        `json:"total"`
-	Items []MailItem `json:"items"`
-}
-
-type MailItem struct {
-	Id      string `json:"id"`
-	Content string `json:"content"`
-	From    string `json:"from"`
-	Subject string `json:"subject"`
-	To      string `json:"to"`
-}
 
 func main() {
 	r := chi.NewRouter()
@@ -66,7 +35,7 @@ func MatchPhrase(w http.ResponseWriter, r *http.Request) {
 	term := r.URL.Query().Get("term")
 	from := r.URL.Query().Get("from")
 
-	resp := makeSearchRequest(term, from)
+	resp := utils.MakeSearchRequest(term, from)
 
 	defer resp.Body.Close()
 
@@ -76,80 +45,8 @@ func MatchPhrase(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	data := parseResponse(body)
+	data := utils.ParseResponse(body)
 
 	w.Write(data)
 
-}
-
-func makeSearchRequest(term string, from string) *http.Response {
-	query := `{
-		"search_type": "%s",
-		"query":
-		{
-			"term": "%s"
-		},
-		"from": %s,
-		"max_results": 20,
-		"_source": []
-	}`
-
-	searchType := "alldocuments"
-
-	if term != "" {
-		searchType = "matchphrase"
-	}
-
-	reqExpression := fmt.Sprintf(query, searchType, term, from)
-
-	req, err := http.NewRequest("POST", "http://localhost:4080/api/test/_search", strings.NewReader(reqExpression))
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	req.SetBasicAuth("admin", "Complex#123")
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36")
-
-	resp, err := http.DefaultClient.Do(req)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return resp
-}
-
-func parseResponse(body []byte) []byte {
-	var result ZincSearchResponse
-
-	err := json.Unmarshal(body, &result)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var response Response
-
-	response.Total = result.Hits.Total.Value
-
-	for _, item := range result.Hits.Hits {
-		var newItem MailItem
-		newItem.Content = item.Source.Content
-		newItem.From = item.Source.From
-		newItem.To = item.Source.To
-		newItem.Subject = item.Source.Subject
-		newItem.Id = item.ID
-
-		response.Items = append(response.Items, newItem)
-	}
-
-	data, err := json.Marshal(response)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return data
 }
