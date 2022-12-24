@@ -15,7 +15,7 @@ onMounted(getMails);
     <div
       class="w-full bg-white mb-5 cursor-pointer rounded-md h-auto p-3 flex gap-3"
       v-for="mail in mails"
-      @click="() => showMailDetail(mail['_source'])"
+      @click="() => showMailDetail(mail)"
       :key="mail['_id']">
       <div
         class="h-9 w-9 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">
@@ -23,13 +23,13 @@ onMounted(getMails);
       </div>
       <div class="w-full p-1">
         <p>
-          <span class="font-bold">From: </span> <span>{{ mail['_source']['from'] }}</span>
+          <span class="font-bold">From: </span> <span>{{ mail['from'] }}</span>
         </p>
         <p>
-          <span class="font-bold">To: </span> <span>{{ mail['_source']['to'] }}</span>
+          <span class="font-bold">To: </span> <span>{{ mail['to'] }}</span>
         </p>
         <p>
-          <span class="font-bold">Subject: </span> <span>{{ mail['_source']['subject'] }}</span>
+          <span class="font-bold">Subject: </span> <span>{{ mail['subject'] }}</span>
         </p>
       </div>
     </div>

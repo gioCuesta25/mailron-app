@@ -10,8 +10,8 @@ export const useMails = () => {
       `http://localhost:4000/documents/match?term=${searchTerm.value}&from=${from.value}`
     );
     const data = await res.json();
-    mailsStore.loadMails(data['hits']['hits']);
-    mailsStore.setTotalMails(data['hits']['total']['value'])
+    mailsStore.loadMails(data['items']);
+    mailsStore.setTotalMails(data['total'])
   };
 
   const showMailDetail = (mail) => {
