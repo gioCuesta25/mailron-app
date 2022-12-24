@@ -1,16 +1,61 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 )
+
+type ZincSearchResponse struct {
+	Took     int  `json:"took"`
+	TimedOut bool `json:"timed_out"`
+	Shards   struct {
+		Total      int `json:"total"`
+		Successful int `json:"successful"`
+		Skipped    int `json:"skipped"`
+		Failed     int `json:"failed"`
+	} `json:"_shards"`
+	Hits struct {
+		Total struct {
+			Value int `json:"value"`
+		} `json:"total"`
+		MaxScore float64 `json:"max_score"`
+		Hits     []struct {
+			Index     string    `json:"_index"`
+			Type      string    `json:"_type"`
+			ID        string    `json:"_id"`
+			Score     float64   `json:"_score"`
+			Timestamp time.Time `json:"@timestamp"`
+			Source    struct {
+				Content string `json:"content"`
+				From    string `json:"from"`
+				Subject string `json:"subject"`
+				To      string `json:"to"`
+			} `json:"_source"`
+		} `json:"hits"`
+	} `json:"hits"`
+}
+
+type Response struct {
+	Total int        `json:"total"`
+	Items []MailItem `json:"items"`
+}
+
+type MailItem struct {
+	Id      string `json:"id"`
+	Content string `json:"content"`
+	From    string `json:"from"`
+	Subject string `json:"subject"`
+	To      string `json:"to"`
+}
 
 func main() {
 	r := chi.NewRouter()
@@ -77,5 +122,35 @@ func MatchPhrase(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	w.Write(body)
+	var result ZincSearchResponse
+
+	err = json.Unmarshal(body, &result)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var response Response
+
+	response.Total = result.Hits.Total.Value
+
+	for _, item := range result.Hits.Hits {
+		var newItem MailItem
+		newItem.Content = item.Source.Content
+		newItem.From = item.Source.From
+		newItem.To = item.Source.To
+		newItem.Subject = item.Source.Subject
+		newItem.Id = item.ID
+
+		response.Items = append(response.Items, newItem)
+	}
+
+	data, err := json.Marshal(response)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	w.Write(data)
+
 }
