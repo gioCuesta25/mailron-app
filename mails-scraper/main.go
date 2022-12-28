@@ -2,14 +2,24 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"os"
+	"runtime/pprof"
 	"strings"
 )
 
 func main() {
+	f, perr := os.Create("cpu.pprof")
+	if perr != nil {
+		log.Fatal(perr)
+	}
+	pprof.StartCPUProfile(f)
+	defer pprof.StopCPUProfile()
+
 	filesPath := "C:/Users/Giovanni/Downloads/enron_mail_20110402/maildir"
 	files, err := os.ReadDir(filesPath)
 	checkError(err)
@@ -22,7 +32,7 @@ func main() {
 			files, err = os.ReadDir(path)
 			checkError(err)
 			for _, j := range files {
-				if j.IsDir() {
+				if j.IsDir() && j.Name() == "_sent_mail" {
 					path := path + fmt.Sprintf("/%s", j.Name())
 					files, err = os.ReadDir(path)
 					checkError(err)
@@ -38,6 +48,18 @@ func main() {
 			}
 		}
 	}
+
+	records := map[string][]map[string]string{}
+
+	records["records"] = mails
+
+	jsonFile, err := json.MarshalIndent(records, "", " ")
+
+	checkError(err)
+
+	err = os.WriteFile("mails.json", jsonFile, 0644)
+
+	checkError(err)
 
 	fmt.Println(len(mails))
 }
