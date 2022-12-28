@@ -30,7 +30,7 @@ func MakeSearchRequest(term string, from string) *http.Response {
 
 	reqExpression := fmt.Sprintf(query, searchType, term, from)
 
-	req, err := http.NewRequest("POST", "http://localhost:4080/api/test/_search", strings.NewReader(reqExpression))
+	req, err := http.NewRequest("POST", "http://localhost:4080/api/enron_mails/_search", strings.NewReader(reqExpression))
 
 	if err != nil {
 		log.Fatal(err)
